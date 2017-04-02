@@ -1,8 +1,13 @@
 #include "timer.h"
 #include "QDebug"
 
-Timer::Timer(float _deltaT){
-    deltaT = _deltaT;
+Timer::Timer(QWidget *Parent)
+    : QObject(Parent)
+{
+}
+
+Timer::~Timer(){
+
 }
 
 void Timer::start()
@@ -22,9 +27,16 @@ bool Timer::ticked()
     return false;
 }
 
-size_t Timer::ticksPassed(){
+void Timer::checkTicks(){
     std::clock_t currentTime = std::clock() - startTime;
     size_t elapsed = (currentTime) / (((double)CLOCKS_PER_SEC)  * deltaT);
+
+    if (elapsed > 0UL){
+        emit ticks(elapsed);
+    }
     startTime += elapsed * ((double)CLOCKS_PER_SEC) * deltaT;
-    return elapsed;
+}
+
+void Timer::setDeltaT(float _deltaT){
+    deltaT = _deltaT;
 }

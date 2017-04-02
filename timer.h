@@ -3,22 +3,30 @@
 
 #include <iostream>
 #include <ctime>
+#include "QObject"
+#include <QOpenGLWidget>
 
-class Timer {
+
+class Timer : public QObject {
+
+    Q_OBJECT
+
 public:
-    Timer() = default;
-    Timer(float _deltaT);
+    Timer(QWidget *Parent = 0);
+    ~Timer();
+
+    void setDeltaT(float _deltaT);
     void start();
     bool ticked();
-    size_t ticksPassed();
+    void checkTicks();
 
+signals:
+    void ticks(size_t numTicks);
 
 private:
     std::clock_t startTime;
     std::clock_t tickTime;
     float deltaT = 1.0;
-
-
 };
 
 #endif

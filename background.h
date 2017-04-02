@@ -4,15 +4,23 @@
 #include "QVector"
 #include "renderable.h"
 #include "timer.h"
-class Background : public Renderable
+#include "QObject"
+
+class Background : public QObject, public Renderable
 {
+    Q_OBJECT
+
 public:
-    Background(Timer *_timer);
+    Background(QWidget *Parent = 0);
+    ~Background() = default;
 
     void render(MainView *mainview);
     void update(MainView *mainview);
     void createShader();
-    Timer *timer;
+
+public slots:
+    void updatePositions(size_t ticksPassed);
+
 private:
     struct star{
         star();

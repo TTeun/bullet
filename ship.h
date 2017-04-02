@@ -11,7 +11,6 @@ public:
     void render(MainView *mainview);
     void update(MainView *mainview);
     void createShader();
-    void initTexture(MainView *mainview);
 
 private:
 };

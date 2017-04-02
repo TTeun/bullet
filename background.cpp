@@ -11,8 +11,8 @@ Background::star::star(){
     y = -1 + ((qrand() % 200) / 100.0f);
 }
 
-Background::Background(Timer *_timer)
-    : timer(_timer)
+Background::Background(QWidget *Parent)
+    : QObject(Parent)
 {
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
@@ -38,9 +38,7 @@ void Background::render(MainView *mainview){
     shaderProg->release();
 }
 
-void Background::update(MainView *mainview){
-    size_t ticksPassed = timer->ticksPassed();
-
+void Background::updatePositions(size_t ticksPassed){
     for (size_t i = 0; i < numStars; ++i){
         (*coords)[i][1] -= ticksPassed * (*stars)[i].speed;
         if ((*coords)[i][1] < -1.0f){
@@ -49,6 +47,11 @@ void Background::update(MainView *mainview){
             (*coords)[i] = QVector2D((*stars)[i].x, (*stars)[i].y);
         }
     }
+
+}
+
+void Background::update(MainView *mainview){
+
 
     mainview->glBindBuffer(GL_ARRAY_BUFFER, coordsBO);
     mainview->glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*coords->size(), coords->data(), GL_DYNAMIC_DRAW);

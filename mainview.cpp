@@ -2,10 +2,13 @@
 
 MainView::MainView(QWidget *Parent)
     : QOpenGLWidget(Parent)
-    , timer(new Timer(0.0166667))
-    , bck(new Background(timer))
+    , timer(new Timer())
+    , bck(new Background())
     , shp(new Ship())
 {
+
+    QObject::connect(timer, SIGNAL(ticks(size_t)),
+                     bck, SLOT(updatePositions(size_t)));
 
 }
 
@@ -66,12 +69,13 @@ void MainView::initializeGL() {
   createShaderPrograms();
   createBuffers();
 
+  timer->setDeltaT(0.01667);
   timer->start();
 
   bck->init(this);
   bck->createShader();
 
-  shp->init(this);
+  shp->init(this, "../bullet/assets/player.png");
 
 }
 
@@ -80,6 +84,8 @@ void MainView::resizeGL(int newWidth, int newHeight) {
 }
 
 void MainView::paintGL() {
+    timer->checkTicks();
+
     glClearColor(0.0, 0.05, 0.10196, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

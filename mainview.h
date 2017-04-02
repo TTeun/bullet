@@ -11,6 +11,7 @@
 #include "background.h"
 #include "timer.h"
 #include "ship.h"
+#include "vector"
 
 class MainView : public QOpenGLWidget, public QOpenGLFunctions_4_1_Core {
 

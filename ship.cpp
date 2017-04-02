@@ -5,10 +5,10 @@ Ship::Ship()
 {
     coords->clear();
     coords->squeeze();
-    coords->append(QVector2D(-1.0, 0.0));
-    coords->append(QVector2D(0.0, 0.6));
-    coords->append(QVector2D(0.6, 0.6));
-    coords->append(QVector2D(0.6, 0.0));
+    coords->append(QVector2D(-0.05, -0.9));
+    coords->append(QVector2D(-0.05, -0.8));
+    coords->append(QVector2D(0.05, -0.8));
+    coords->append(QVector2D(0.05, -0.9));
 
     texCoords->clear();
     texCoords->squeeze();
