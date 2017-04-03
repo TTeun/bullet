@@ -1,15 +1,10 @@
 #include "ship.h"
 #include "mainview.h"
+#include "QtGlobal"
 
-Ship::Ship()
+Ship::Ship(QWidget *Parent)
+    : QObject(Parent)
 {
-    coords->clear();
-    coords->squeeze();
-    coords->append(QVector2D(-0.05, -0.9));
-    coords->append(QVector2D(-0.05, -0.8));
-    coords->append(QVector2D(0.05, -0.8));
-    coords->append(QVector2D(0.05, -0.9));
-
     texCoords->clear();
     texCoords->squeeze();
     texCoords->append(QVector2D(0.0, 0.0));
@@ -19,21 +14,21 @@ Ship::Ship()
 
     colours->clear();
     colours->squeeze();
-    for (size_t i = 0; i < 4; ++i)
-        colours->append(QVector3D(0.6,0.6,0.6));
-
 }
 
 void Ship::update(MainView *mainview){
     int location = shaderProg->uniformLocation("ourTexture");;
     shaderProg->setUniformValue(location, 0);
 
+    coords->clear();
+    coords->squeeze();
+    coords->append(QVector2D(xpos - w / 2, ypos - h / 2));
+    coords->append(QVector2D(xpos - w / 2, ypos + h / 2));
+    coords->append(QVector2D(xpos + w / 2, ypos + h / 2));
+    coords->append(QVector2D(xpos + w / 2, ypos - h / 2));
 
     mainview->glBindBuffer(GL_ARRAY_BUFFER, coordsBO);
     mainview->glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*coords->size(), coords->data(), GL_DYNAMIC_DRAW);
-
-    mainview->glBindBuffer(GL_ARRAY_BUFFER, coloursBO);
-    mainview->glBufferData(GL_ARRAY_BUFFER, sizeof(QVector3D)*colours->size(), colours->data(), GL_DYNAMIC_DRAW);
 
     mainview->glBindBuffer(GL_ARRAY_BUFFER, texBO);
     mainview->glBufferData(GL_ARRAY_BUFFER, sizeof(QVector2D)*texCoords->size(), texCoords->data(), GL_DYNAMIC_DRAW);
@@ -61,4 +56,29 @@ void Ship::createShader(){
     shaderProg->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/frag_tex.glsl");
 
     shaderProg->link();
+}
+
+void Ship::move(size_t elapsed){
+
+    if (xacc)
+        xvel += 0.3 * xacc;
+    else
+        xvel /= 2;
+
+    if (yacc)
+        yvel += 0.3 * yacc;
+    else
+        yvel /= 2;
+
+
+    xvel = qBound(-3.9f, xvel, 3.9f);
+    yvel = qBound(-3.9f, yvel, 3.9f);
+
+
+
+    xpos += 0.01 * elapsed * xvel;
+    ypos += 0.01 * elapsed * yvel;
+
+    ypos = qBound(-1.0f + 0.6f * h, ypos, 1.0f - 0.6f * h);
+    xpos = qBound(-1.0f + 0.6f * w, xpos, 1.0f - 0.6f * w);
 }

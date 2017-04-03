@@ -7,8 +7,8 @@ MainView::MainView(QWidget *Parent)
     , shp(new Ship())
 {
 
-    QObject::connect(timer, SIGNAL(ticks(size_t)),
-                     bck, SLOT(updatePositions(size_t)));
+    QObject::connect(timer, SIGNAL(ticks(size_t)), bck, SLOT(updatePositions(size_t)));
+    QObject::connect(timer, SIGNAL(ticks(size_t)), shp, SLOT(move(size_t)));
 
 }
 
@@ -75,12 +75,14 @@ void MainView::initializeGL() {
   bck->init(this);
   bck->createShader();
 
-  shp->init(this, "../bullet/assets/player.png");
+  shp->init(this, "../bullet/assets/ship.png");
 
 }
 
 void MainView::resizeGL(int newWidth, int newHeight) {
-  qDebug() << ".. resizeGL";
+
+
+    qDebug() << ".. resizeGL";
 }
 
 void MainView::paintGL() {
@@ -97,24 +99,44 @@ void MainView::paintGL() {
 
 }
 
-void MainView::mousePressEvent(QMouseEvent* event) {}
+void MainView::mousePressEvent(QMouseEvent* event) {
+    setFocus();
 
-void MainView::mouseMoveEvent(QMouseEvent* event) {}
+}
+
+void MainView::mouseMoveEvent(QMouseEvent* event) {
+
+}
 
 void MainView::mouseReleaseEvent(QMouseEvent*) {
-  setFocus();
+
 }
 
 void MainView::wheelEvent(QWheelEvent* event) {
 }
 
 void MainView::keyPressEvent(QKeyEvent* event) {
-  switch(event->key()) {
-  case 'Z':
+    char key = event->key();
+    if (key == 'W')
+        shp->yacc++;
+    if (key == 'S')
+        shp->yacc--;
+    if (key == 'A')
+        shp->xacc--;
+    if (key == 'D')
+        shp->xacc++;
+}
 
-      update();
-    break;
-  }
+void MainView::keyReleaseEvent(QKeyEvent* event) {
+    char key = event->key();
+    if (key == 'W')
+        shp->yacc--;
+    if (key == 'S')
+        shp->yacc++;
+    if (key == 'A')
+        shp->xacc++;
+    if (key == 'D')
+        shp->xacc--;
 }
 
 void MainView::onMessageLogged( QOpenGLDebugMessage Message ) {

@@ -36,6 +36,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent* event);
   void keyPressEvent(QKeyEvent* event);
+  void keyReleaseEvent(QKeyEvent* event);
 
 private:
   QOpenGLDebugLogger* debugLogger;
